@@ -100,6 +100,9 @@ IcuWinEnv = [{"CFLAGS", "/DXP_WIN /IC:\\relax\\icu\\include"},
 ComparePath = "priv/couch_ejson_compare.so",
 CompareSrc = ["priv/couch_ejson_compare/*.c"],
 
+HashPath = "priv/couch_hash.so",
+HashSrc = ["priv/couch_hash/*.c"],
+
 BaseSpecs = [
         %% couchjs
         {"darwin", CouchJSPath, CouchJSSrc, [{env, [{"CFLAGS", JS_CFLAGS ++ " -DXP_UNIX -I/usr/local/include/js"}, {"LDFLAGS", JS_LDFLAGS ++ " -L/usr/local/lib"}]}]},
@@ -115,7 +118,12 @@ BaseSpecs = [
         {"darwin", ComparePath, CompareSrc, [{env, IcuEnv ++ IcuDarwinEnv}]},
         {"linux",  ComparePath, CompareSrc, [{env, IcuEnv}]},
         {"bsd",   ComparePath, CompareSrc, [{env, IcuEnv ++ IcuBsdEnv}]},
-        {"win32",  ComparePath, CompareSrc, [{env, IcuWinEnv}]}
+        {"win32",  ComparePath, CompareSrc, [{env, IcuWinEnv}]},
+        % hash
+        {"darwin", HashPath, HashSrc, [{env, IcuEnv ++ IcuDarwinEnv}]},
+        {"linux",  HashPath, HashSrc, [{env, IcuEnv}]},
+        {"bsd",   HashPath, HashSrc, [{env, IcuEnv ++ IcuBsdEnv}]},
+        {"win32",  HashPath, HashSrc, [{env, IcuWinEnv}]}
 ],
 
 SpawnSpec = [
