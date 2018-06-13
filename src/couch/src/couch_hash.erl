@@ -12,7 +12,7 @@
 
 -module(couch_hash).
 
--export([hash/1]).
+-export([hash/1, hash_final/1, hash_init/0, hash_update/2]).
 
 -on_load(init/0).
 
@@ -24,15 +24,42 @@ init() ->
 hash(Data) ->
     case info_fips_nif() of
         "enabled" ->
-            hexstring(erlang:md5(Data));
+            erlang:md5(Data);
         "not_enabled" ->
             crypto:hash(md5, Data);
         "not_supported" ->
             crypto:hash(md5, Data)
     end.
 
-hexstring(<<X:128/big-unsigned-integer>>) ->
-    lists:flatten(io_lib:format("~32.16.0b", [X])).
+hash_final(Context) ->
+    case info_fips_nif() of
+        "enabled" ->
+            erlang:md5_final(Context);
+        "not_enabled" ->
+            crypto:hash_final(Context);
+        "not_supported" ->
+            crypto:hash_final(Context)
+    end.
+
+hash_init() ->
+    case info_fips_nif() of
+        "enabled" ->
+            erlang:md5_init();
+        "not_enabled" ->
+            crypto:hash_init(md5);
+        "not_supported" ->
+            crypto:hash_init(md5)
+    end.
+
+hash_update(Context, Data) ->
+    case info_fips_nif() of
+        "enabled" ->
+            erlang:md5_update(Context, Data);
+        "not_enabled" ->
+            crypto:hash_update(Context, Data);
+        "not_supported" ->
+            crypto:hash_update(Context, Data)
+    end.
 
 info_fips_nif() ->
     "not_supported".
