@@ -156,7 +156,7 @@ ddoc_to_mrst(DbName, #doc{id=Id, body={Fields}}) ->
         keyseq_indexed=KeySeqIndexed
     },
     SigInfo = {Views, Language, DesignOpts, couch_index_util:sort_lib(Lib)},
-    {ok, IdxState#mrst{sig=crypto:hash(md5, term_to_binary(SigInfo))}}.
+    {ok, IdxState#mrst{sig=couch_hash:hash(term_to_binary(SigInfo))}}.
 
 
 set_view_type(_Args, _ViewName, []) ->
@@ -202,7 +202,7 @@ view_sig(Db, State, View, #mrargs{include_docs=true}=Args) ->
         keyseq_indexed=KeySeqIndexed
     } = State,
     Term = view_sig_term(BaseSig, UpdateSeq, PurgeSeq, KeySeqIndexed, SeqIndexed),
-    couch_index_util:hexsig(crypto:hash(md5, term_to_binary(Term)));
+    couch_index_util:hexsig(couch_hash:hash(term_to_binary(Term)));
 view_sig(Db, State, {_Nth, _Lang, View}, Args) ->
     view_sig(Db, State, View, Args);
 view_sig(_Db, State, View, Args0) ->
@@ -216,7 +216,7 @@ view_sig(_Db, State, View, Args0) ->
         extra=[]
     },
     Term = view_sig_term(Sig, UpdateSeq, PurgeSeq, KeySeqIndexed, SeqIndexed, Args),
-    couch_index_util:hexsig(crypto:hash(md5, term_to_binary(Term))).
+    couch_index_util:hexsig(couch_hash:hash(term_to_binary(Term))).
 
 view_sig_term(BaseSig, UpdateSeq, PurgeSeq, false, false) ->
     {BaseSig, UpdateSeq, PurgeSeq};
@@ -991,7 +991,7 @@ sig_vsn_12x(State) ->
         {ViewInfo, State#mrst.language, State#mrst.design_opts,
             couch_index_util:sort_lib(State#mrst.lib)}
     end,
-    crypto:hash(md5, term_to_binary(SigData)).
+    couch_hash:hash(term_to_binary(SigData)).
 
 old_view_format(View) ->
 {
